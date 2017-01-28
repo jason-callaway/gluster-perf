@@ -1,7 +1,42 @@
 ---
-- hosts: all
+- hosts: localhost
   connection: local
+  gather_facts: no
+  become: false
+  tasks:
+    - replace:
+        dest: inventory/aws/hosts/ec2.ini
+        regexp: "^# instance_filters = tag:env=staging"
+        replace: "instance_filters = tag:env={{ cluster_id }}"
+    - replace:
+        dest: inventory/aws/hosts/ec2.ini
+        regexp: "^instance_filters = tag:env=(.*)"
+        replace: "instance_filters = tag:env={{ cluster_id }}"
+    - file:
+        path: inventory/static
+        state: directory
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
   become: false
   roles:
     - rhtps.private-aws
+
+- hosts: tag_instance_role_gluster_node
+  connection: ssh
+  gather_facts: yes
+  become: true
+  pre_tasks:
+    - meta: refresh_inventory
   tasks:
+    - name: get rid of RHUI repo files if present
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "/etc/yum.repos.d/redhat-rhui.repo"
+        - "/etc/yum.repos.d/redhat-rhui-client-config.repo"
+        - "/etc/yum.repos.d/rhui-load-balancers.conf"
+
+

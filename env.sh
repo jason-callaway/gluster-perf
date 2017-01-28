@@ -9,9 +9,9 @@ echo "****************************************"
 echo
 
 # Use the correct PYTHONPATH on Mac OS X
-if [ "$(uname -s)" == "Darwin" ]; then
-    export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages:/usr/local/lib/python2.7/site-packages
-fi
+#if [ "$(uname -s)" == "Darwin" ]; then
+#    export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages:/usr/local/lib/python2.7/site-packages
+#fi
 
 # Read RHN info
 printf "RHN username: "

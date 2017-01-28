@@ -40,14 +40,14 @@
     my_instance_role: "{{ item['role'] }}"
     my_env: "{{ cluster_id }}"
     my_side: "sidea"
-    my_vpc_subnet_id: "{{ public_subnet_id }}"
+    my_vpc_subnet_id: "{{ public_subnet_id_sidea }}"
     my_items: "{{ node_manifest['sidea_nodes'] }}"
 
 - set_fact:
     ec2_sidea_instances: "{{ ec2_instances }}"
 
 - set_fact:
-    side_a_prime: "{{ ec2_public_instances[0].id }}"
+    side_a_prime: "{{ ec2_sidea_instances[0].id }}"
 
 - name: Create ec2 public node sideb instances
   include: instances/create_instance.yml
@@ -58,7 +58,7 @@
     my_instance_role: "{{ item['role'] }}"
     my_env: "{{ cluster_id }}"
     my_side: "sidea"
-    my_vpc_subnet_id: "{{ public_subnet_id }}"
+    my_vpc_subnet_id: "{{ public_subnet_id_sideb }}"
     my_items: "{{ node_manifest['sideb_nodes'] }}"
 
 - set_fact:
@@ -107,6 +107,8 @@
 - set_fact:
     ec2_instances: "{{ ec2.tagged_instances }}"
   when: ec2.tagged_instances is defined and ec2tagged_instances
+
+- debug: var=ec2_instances
 
 # ec2_remote_facts uses private_ip_address instead of private_ip for some reason
 # This sucks so using a hack to assign the proper one regardless

@@ -16,7 +16,7 @@ public_cidr_c_sideb: 10.0.2.0/24
 node_manifest:
   sidea_nodes:
     role: gluster_node
-    type: m4.xlarge
+    type: t2.medium
     count: 3
     side: a
     rootvol:
@@ -25,31 +25,31 @@ node_manifest:
     volumes:
       - name: /dev/xvdb
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdc
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvde
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdf
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdg
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdh
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdi
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdj
         type: gp2
-        size: 10
+        size: 1
   sideb_nodes:
     role: gluster_node
-    type: m4.xlarge
+    type: t2.medium
     count: 3
     side: b
     rootvol:
@@ -58,28 +58,28 @@ node_manifest:
     volumes:
       - name: /dev/xvdb
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdc
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvde
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdf
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdg
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdh
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdi
         type: gp2
-        size: 10
+        size: 1
       - name: /dev/xvdj
         type: gp2
-        size: 10
+        size: 1
 
 client_manifest:
   masters:
@@ -92,7 +92,7 @@ client_manifest:
     volumes:
       - name: /dev/xvdb
         type: gp2
-        size: 50
+        size: 1
 
 sg_tcp_ports:
   - 22
