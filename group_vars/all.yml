@@ -1,0 +1,4 @@
+---
+cluster_id: gluster_perf
+r53_zone: rhtps.io
+ec2_keypair: "{{ lookup('env','ec2_keypair') }}"

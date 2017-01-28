@@ -1,0 +1,7 @@
+---
+- hosts: all
+  connection: local
+  become: false
+  roles:
+    - rhtps.private-aws
+  tasks:
