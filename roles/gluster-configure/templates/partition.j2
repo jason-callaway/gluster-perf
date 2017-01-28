@@ -1,0 +1,25 @@
+#!/bin/bash
+
+lvs | grep brick_lv >/dev/null 2>&1
+if [ "${?}" != "0" ]; then
+    {% for g in gluster_devs %}
+    wipefs -a {{ g }}
+    {% endfor %}
+
+    pvcreate --dataalignment 1280K {% for g in gluster_devs %}{{ g }} {% endfor %}
+    vgcreate --physicalextentsize 128K rhs_vg {% for g in gluster_devs %}{{ g }} {% endfor %}
+
+    # Docs recommend creating a metadata size of 16GiB
+    lvcreate -L 16776960K --name rhs_pool_meta rhs_vg
+
+    lvcreate --name thin_pool rhs_vg
+    lvconvert --chunksize 256K --thinpool rhs_vg/thin_pool --poolmetadata rhs_vg/rhs_pool_meta
+
+    # Turning off zeroing for better performance
+    lvchange --zero n rhs_vg/thin_pool
+
+    # TODO: need to test this with 1TB volumes
+    lvcreate --thin --name brick_lv --virtualsize {{ gluster_num_devs * gluster_dev_size - 16 }}G rhs_vg/thin_pool
+
+    mkfs.xfs -i size=512 /dev/rhs_vg/brick_lv
+fi

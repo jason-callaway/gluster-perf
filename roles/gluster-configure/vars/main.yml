@@ -1,0 +1,10 @@
+gluster_devs:
+  - /dev/xvdb
+  - /dev/xvdc
+  - /dev/xvdd
+  - /dev/xvde
+  - /dev/xvdf
+  - /dev/xvdg
+  - /dev/xvdh
+  - /dev/xvdi
+  - /dev/xvdj

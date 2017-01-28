@@ -26,28 +26,29 @@ node_manifest:
     volumes:
       - name: /dev/xvdb
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdc
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
+      - name: /dev/xvdd
+        type: gp2
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvde
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdf
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdg
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdh
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdi
         type: gp2
-        size: 1
-      - name: /dev/xvdj
-        type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
+
   sideb_nodes:
     role: gluster_node
     type: t2.medium
@@ -59,28 +60,28 @@ node_manifest:
     volumes:
       - name: /dev/xvdb
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdc
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
+      - name: /dev/xvdd
+        type: gp2
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvde
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdf
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdg
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdh
         type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
       - name: /dev/xvdi
         type: gp2
-        size: 1
-      - name: /dev/xvdj
-        type: gp2
-        size: 1
+        size: "{{ gluster_dev_size}}"
 
 client_manifest:
   masters:
@@ -131,3 +132,4 @@ sg_udp_ports:
     to: 111
   - from: 963
     to: 963
+

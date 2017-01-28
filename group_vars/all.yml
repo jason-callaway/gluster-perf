@@ -2,3 +2,11 @@
 cluster_id: gluster_perf
 r53_zone: rhtps.io
 ec2_keypair: "{{ lookup('env','ec2_keypair') }}"
+rhn_username: "{{ lookup('env','rhn_username') }}"
+rhn_password: "{{ lookup('env','rhn_password') }}"
+rhn_pool: "{{ lookup('env','rhn_pool') }}"
+
+# gluster_devs needs to match rhtps.private-aws node manifest volumes count
+gluster_num_devs: 8
+# gluster_dev_size is in GBs
+gluster_dev_size: 10
