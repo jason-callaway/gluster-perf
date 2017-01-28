@@ -1,4 +1,16 @@
 - block:
+
+    - debug: var=gluster_num_devs
+    - debug: var=gluster_dev_size
+
+    - set_fact:
+        meta_size: "{{ gluster_num_devs * gluster_dev_size / 200 }}"
+      when: gluster_num_devs * gluster_dev_size / 200 < 16
+
+    - set_fact:
+        meta_size: "16"
+      when: gluster_num_devs * gluster_dev_size / 200 >= 16
+
     - name: Copy partition script
       template:
         src: partition.j2

@@ -1,42 +1,38 @@
 - block:
-    - name: get rid of RHUI repo files if present
-      file:
-        path: "{{ item }}"
-        state: absent
-      with_items:
-        - "/etc/yum.repos.d/redhat-rhui.repo"
-        - "/etc/yum.repos.d/redhat-rhui-client-config.repo"
-        - "/etc/yum.repos.d/rhui-load-balancers.conf"
-
-    - name: register with RHN
-      redhat_subscription:
-        state: present
-        username: "{{ rhn_username }}"
-        password: "{{ rhn_password }}"
-        autosubscribe: false
-      ignore_errors: yes
-
-    - shell: yum-config-manager rhel-7-server-debug-rpms | grep enabled
-      register: debug_enabled
-
-    # Only run this once
     - block:
+        - name: get rid of RHUI repo files if present
+          file:
+            path: "{{ item }}"
+            state: absent
+          with_items:
+            - "/etc/yum.repos.d/redhat-rhui.repo"
+            - "/etc/yum.repos.d/redhat-rhui-client-config.repo"
+            - "/etc/yum.repos.d/rhui-load-balancers.conf"
+
+        - name: register with RHN
+          redhat_subscription:
+            state: present
+            username: "{{ rhn_username }}"
+            password: "{{ rhn_password }}"
+            autosubscribe: false
+          ignore_errors: yes
+
         - name: unsub everything
-          command: subscription-manager unsubscribe --all
+          shell: subscription-manager unsubscribe --all
           ignore_errors: yes
 
         - name: subscribe to pool
-          command: subscription-manager subscribe --pool "{{ rhn_pool }}"
+          shell: subscription-manager subscribe --pool "{{ rhn_pool }}"
           ignore_errors: no
 
-        # Currently no support for repo manipulation in redhat_subscription module
         - name: disable all repos
-          command: subscription-manager repos --disable="*"
+          shell: subscription-manager repos --disable="*"
 
         - name: enable Gluster repos
-          command: subscription-manager repos --enable="{{ item }}"
+          shell: subscription-manager repos --enable="{{ item }}"
           with_items: "{{ repo_names }}"
-      when: debug_enabled.stdout_lines[0] == "enabled = True"
+      tags:
+        - subscription_manager
 
     - name: update RHEL
       yum:
@@ -56,7 +52,7 @@
           command: "shutdown -r now"
           async: 0
           poll: 0
-          ignore_errors: true
+          ignore_errors: yes
 
         - name: Wait for SSH to come up on public instances
           local_action: wait_for host={{ item.public_dns_name }} port=22 delay=0 timeout=600 state=started

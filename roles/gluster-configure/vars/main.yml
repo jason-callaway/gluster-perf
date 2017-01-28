@@ -7,4 +7,3 @@ gluster_devs:
   - /dev/xvdg
   - /dev/xvdh
   - /dev/xvdi
-  - /dev/xvdj

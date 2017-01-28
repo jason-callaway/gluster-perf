@@ -33,3 +33,4 @@
     - meta: refresh_inventory
   roles:
     - gluster-install
+    - gluster-configure
