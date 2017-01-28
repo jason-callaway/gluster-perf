@@ -57,7 +57,7 @@
     my_Name: "{{ cluster_id }}-{{ item['role'] }}-instance"
     my_instance_role: "{{ item['role'] }}"
     my_env: "{{ cluster_id }}"
-    my_side: "sidea"
+    my_side: "sideb"
     my_vpc_subnet_id: "{{ public_subnet_id_sideb }}"
     my_items: "{{ node_manifest['sideb_nodes'] }}"
 
@@ -92,7 +92,7 @@
 # we need to update the public IP to the floating IP and DNS A records.
 # http://stackoverflow.com/questions/39493070/ansible-ec2-get-public-dns-after-associate-elastic-ip
 
-- name: Refresh bastion information after elastic IP
+- name: Refresh gluster_node information
   ec2_remote_facts:
     region: "{{ ec2_region }}"
     filters:

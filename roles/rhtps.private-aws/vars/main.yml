@@ -6,6 +6,7 @@ ec2_region_sidea: "{{ ec2_region }}a"
 ec2_region_sideb: "{{ ec2_region }}e"
 ec2_image: ami-2051294a
 ec2_instance_type: m4.xlarge
+ec2_username: ec2-user
 
 create_vpcs: True
 
@@ -94,22 +95,39 @@ client_manifest:
         type: gp2
         size: 1
 
+# Note, for this perf testing, we're using VPC internal names and IPs.
+# If you want to use external names or IPs you'll have to create security
+# groups permitting the inbound traffic, but I'm currently running into a
+# limitation with the number of rules per group and the number of groups
+# per interface. Need to research further for production.
 sg_tcp_ports:
-  - 22
-  - 111
-  - 139
-  - 445
-  - 965
-  - 2049
-  - 24007
-  - "24009-24108"
-  - 38465
-  - 38466
-  - 38468
-  - 38469
-  - 39543
-  - "49152-49251"
+  - from: 22
+    to: 22
+  - from: 111
+    to: 111
+  - from: 139
+    to: 139
+  - from: 445
+    to: 445
+  - from: 965
+    to: 965
+  - from: 2049
+    to: 2049
+  - from: 24007
+    to: 24007
+  - from: 24009
+    to: 24108
+  - from: 38465
+    to: 38466
+  - from: 38468
+    to: 38469
+  - from: 39543
+    to: 39543
+  - from: 49152
+    to: 49251
 
 sg_udp_ports:
-  - 111
-  - 963
+  - from: 111
+    to: 111
+  - from: 963
+    to: 963
