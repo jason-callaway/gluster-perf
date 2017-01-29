@@ -93,15 +93,21 @@
       template:
         src: dispersed.j2
         dest: ./dispersed.sh
+    - name: create the mount script
+      template:
+        src: mount_volume.j2
+        dest: ./mount_volume.sh
   tags:
     - perf_harness
+    - perf_run
 
 - hosts: tag_instance_role_gluster_node
   connection: ssh
   gather_facts: yes
   become: true
-  roles:
-    - perf-harness
+  tasks:
+    - name: apply the "{{ io_profile }}" tuned profile
+      shell: tuned-adm profile "rhgs-{{ io_profile }}-io"
   tags:
     - perf_harness
 
@@ -155,3 +161,77 @@
   tags:
     - perf_harness
     - clean_all
+
+- hosts: tag_instance_role_gluster_client
+  connection: ssh
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: ensure EPEL is installed
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: installed
+
+    - name: install fio and Gluster client
+      yum:
+        name: phoronix-test-suite, glusterfs, glusterfs-fuse, gcc, gcc-c++, make, autoconf, automake, glibc-devel, glibc-headers, patch, libaio-devel, fio, bzip2
+        state: latest
+        enablerepo: epel
+
+    - name: copy the mount script
+      copy:
+        src: ./mount_volume.sh
+        dest: /tmp/mount_volume.sh
+        owner: root
+        mode: 755
+
+    - name: execute the mount script
+      shell: /tmp/mount_volume.sh
+
+    - name: copy the pts config file
+      copy:
+        src: ./phoronix-test-suite.xml
+        dest: /etc/phoronix-test-suite.xml
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: make the results directory
+      file:
+        path: /root/phoronix-test-suite/test-results
+        recurse: yes
+        state: directory
+
+    - name: install the flexible IO test suite
+      shell: phoronix-test-suite install fio
+
+#    Size options:
+#    1:  4KB
+#    2:  8KB
+#    3:  16KB
+#    4:  32KB
+#    5:  64KB
+#    6:  128KB
+#    7:  256KB
+#    8:  512KB
+#    9:  1MB
+#    10: 2MB
+#    11: 4MB
+#    12: 8MB
+#    13: 16MB
+#    14: 32MB
+#    15: 64MB
+#    16: 128MB
+#    17: Test All Options
+    - name: run the tests
+      shell: "(echo 3,4; echo 1; echo 1; echo 1; echo 1,4,7,10,14; echo 1; echo Y; echo {{ ansible_date_time.iso8601 }}; echo; echo; echo y; echo n) | phoronix-test-suite run fio"
+
+    - name: collect the results
+      shell: "phoronix-test-suite result-file-to-json {{ ansible_date_time.iso8601 }}"
+      register: pts
+
+    - name: save the results
+      local_action: copy content={{ pts.stdout_lines }} dest=./results.json
+
+  tags:
+    - perf_run

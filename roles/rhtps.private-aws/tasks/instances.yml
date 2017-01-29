@@ -31,6 +31,18 @@
         cidr_ip: 0.0.0.0/0
   register: public_security_group
 
+- name: Create ec2 public client instances
+  include: instances/create_instance.yml
+  vars:
+    my_type: "{{ item['type'] }}"
+    my_group_id: "{{ public_security_group.group_id }}"
+    my_Name: "{{ cluster_id }}-{{ item['role'] }}-instance"
+    my_instance_role: "{{ item['role'] }}"
+    my_env: "{{ cluster_id }}"
+    my_side: "sidea"
+    my_vpc_subnet_id: "{{ public_subnet_id_sidea }}"
+    my_items: "{{ client_manifest['clients'] }}"
+
 - name: Create ec2 public node sidea instances
   include: instances/create_instance.yml
   vars:

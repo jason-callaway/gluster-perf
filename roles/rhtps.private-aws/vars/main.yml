@@ -5,7 +5,7 @@ ec2_region: us-east-1
 ec2_region_sidea: "{{ ec2_region }}a"
 ec2_region_sideb: "{{ ec2_region }}e"
 ec2_image: ami-2051294a
-ec2_instance_type: m4.xlarge
+#ec2_instance_type: m4.xlarge
 ec2_username: ec2-user
 
 create_vpcs: True
@@ -17,7 +17,7 @@ public_cidr_c_sideb: 10.0.2.0/24
 node_manifest:
   sidea_nodes:
     role: gluster_node
-    type: t2.medium
+    type: "{{ ec2_instance_type }}"
     count: 3
     side: a
     rootvol:
@@ -51,7 +51,7 @@ node_manifest:
 
   sideb_nodes:
     role: gluster_node
-    type: t2.medium
+    type: "{{ ec2_instance_type }}"
     count: 3
     side: b
     rootvol:
@@ -84,17 +84,13 @@ node_manifest:
         size: "{{ gluster_dev_size}}"
 
 client_manifest:
-  masters:
-    role: master
-    type: t2.medium
+  clients:
+    role: gluster_client
+    type: "{{ ec2_instance_type }}"
     count: 1
     rootvol:
-      size: 10
+      size: 100
       type: gp2
-    volumes:
-      - name: /dev/xvdb
-        type: gp2
-        size: 1
 
 # Note, for this perf testing, we're using VPC internal names and IPs.
 # If you want to use external names or IPs you'll have to create security
