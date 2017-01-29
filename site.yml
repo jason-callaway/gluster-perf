@@ -34,3 +34,19 @@
   roles:
     - gluster-install
     - gluster-configure
+
+- hosts: tag_instance_role_gluster_node[0]
+  connection: ssh
+  gather_facts: yes
+  become: true
+  tasks:
+
+    - name: copy the peer probe script
+      copy:
+        src: ./peer_probe.sh
+        dest: /tmp/peer_probe.sh
+        owner: root
+        mode: 755
+
+    - name: execute the peer probe script
+      shell: "/tmp/peer_probe.sh"

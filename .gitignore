@@ -89,3 +89,5 @@ ENV/
 .ropeproject
 .idea
 *.retry
+hostvars.json
+peer_probe.sh

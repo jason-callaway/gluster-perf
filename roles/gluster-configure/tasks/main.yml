@@ -1,8 +1,4 @@
 - block:
-
-    - debug: var=gluster_num_devs
-    - debug: var=gluster_dev_size
-
     - set_fact:
         meta_size: "{{ gluster_num_devs * gluster_dev_size / 200 }}"
       when: gluster_num_devs * gluster_dev_size / 200 < 16
@@ -43,4 +39,4 @@
         recurse: yes
 
   tags:
-    - gluster_configure
+    - gluster_prep

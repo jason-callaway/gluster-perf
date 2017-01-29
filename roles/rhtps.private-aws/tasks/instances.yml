@@ -110,6 +110,11 @@
 
 - debug: var=ec2_instances
 
+- name: make peer probe script for later use
+  template:
+    src: peer_probe.j2
+    dest: ./peer_probe.sh
+
 # ec2_remote_facts uses private_ip_address instead of private_ip for some reason
 # This sucks so using a hack to assign the proper one regardless
 #

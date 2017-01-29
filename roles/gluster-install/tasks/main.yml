@@ -39,6 +39,11 @@
         name: '*'
         state: latest
 
+    - name: remove firewalld
+      yum:
+        name: firewalld
+        state: absent
+
     - name: install Gluster packages
       yum:
         name: redhat-storage-server
