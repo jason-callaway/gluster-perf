@@ -91,3 +91,5 @@ ENV/
 *.retry
 hostvars.json
 peer_probe.sh
+dispersed.sh
+distributed-replicated.sh

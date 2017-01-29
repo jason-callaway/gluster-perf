@@ -40,7 +40,6 @@
   gather_facts: yes
   become: true
   tasks:
-
     - name: copy the peer probe script
       copy:
         src: ./peer_probe.sh
@@ -50,3 +49,109 @@
 
     - name: execute the peer probe script
       shell: "/tmp/peer_probe.sh"
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  become: false
+  pre_tasks:
+    - meta: refresh_inventory
+  tasks:
+    - debug: var=groups
+    - name: initialize node variables
+      set_fact:
+        node_fqdns: "{{ [] }}"
+        sidea_fqdns: "{{ [] }}"
+        sideb_fqdns: "{{ [] }}"
+        alternate_fqdns: "{{ [] }}"
+    - name: isolate gluster node fqdns
+      set_fact:
+        node_fqdns: "{{ node_fqdns + [hostvars[item].ec2_private_dns_name] }}"
+      with_items:
+        - "{{ groups['tag_instance_role_gluster_node'] }}"
+    - name: isolate sidea fqdns
+      set_fact:
+        sidea_fqdns: "{{ sidea_fqdns + [hostvars[item].ec2_private_dns_name] }}"
+      with_items:
+        - "{{ groups['tag_side_sidea'] }}"
+    - name: isolate sideb fqdns
+      set_fact:
+        sideb_fqdns: "{{ sideb_fqdns + [hostvars[item].ec2_private_dns_name] }}"
+      with_items:
+        - "{{ groups['tag_side_sideb'] }}"
+    - name: alternate side fqnds
+      set_fact:
+        alternate_fqdns: "{{ alternate_fqdns + [item[0]] + [item[1]] }}"
+      with_together:
+        - "{{ sidea_fqdns }}"
+        - "{{ sideb_fqdns }}"
+    - name: create the distributed-replicated script
+      template:
+        src: distributed-replicated.j2
+        dest: ./distributed-replicated.sh
+    - name: create dispersed script
+      template:
+        src: dispersed.j2
+        dest: ./dispersed.sh
+  tags:
+    - perf_harness
+
+- hosts: tag_instance_role_gluster_node
+  connection: ssh
+  gather_facts: yes
+  become: true
+  roles:
+    - perf-harness
+  tags:
+    - perf_harness
+
+# unmount client
+
+- hosts: tag_instance_role_gluster_node
+  connection: ssh
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: ensure glusterd is running
+      service:
+        name: glusterd
+        state: started
+    - name: "destroy {{ volume_name }} volume"
+      shell: "(echo y) | gluster volume delete {{ volume_name }}"
+      ignore_errors: yes
+    - name: stop glusterd service
+      service:
+        name: glusterd
+        state: stopped
+    - name: clear out bricks directories
+      shell: >
+        glusterd --xlator-option *.upgrade=on -N;
+        rm -Rf /bricks/brick1/brick/.glusterfs;
+        setfattr -x trusted.glusterfs.volume-id /bricks/brick1/brick;
+        setfattr -x trusted.gfid /bricks/brick1/brick;
+      ignore_errors: yes
+    - name: ensure glusterd is running
+      service:
+        name: glusterd
+        state: started
+        enabled: yes
+  tags:
+    - perf_harness
+    - clean_all
+
+- hosts: tag_instance_role_gluster_node[0]
+  connection: ssh
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: "copy the {{ volume_type }} script"
+      copy:
+        src: "./{{ volume_type }}.sh"
+        dest: "/tmp/{{ volume_type }}.sh"
+        owner: root
+        mode: 755
+    - name: "execute the {{ volume_type }} script"
+      shell: "/tmp/{{ volume_type }}.sh"
+  tags:
+    - perf_harness
+    - clean_all

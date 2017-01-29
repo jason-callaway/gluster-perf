@@ -6,7 +6,20 @@ rhn_username: "{{ lookup('env','rhn_username') }}"
 rhn_password: "{{ lookup('env','rhn_password') }}"
 rhn_pool: "{{ lookup('env','rhn_pool') }}"
 
-# gluster_devs needs to match rhtps.private-aws node manifest volumes count
+# gluster_hosts and devs needs to match rhtps.private-aws node manifest count
+# and volumes count
+gluster_num_hosts: 6
 gluster_num_devs: 8
 # gluster_dev_size is in GBs
 gluster_dev_size: 10
+
+io_profile: sequential
+io_file_size: large
+#io_profile: random
+#io_file_size: small
+volume_type: distributed-replicated
+replica_count: 2
+dispersed_redundency: 2
+dispersed_data: "{{ gluster_num_hosts - dispersed_redundency }}"
+#volume_type: dispersed
+volume_name: perfvol
