@@ -34,10 +34,25 @@
   roles:
     - gluster-install
     - gluster-configure
+  tags:
+    - gluster_install
+
+- hosts: tag_instance_role_gluster_node
+  connection: ssh
+  gather_facts: no
+  become: true
+  tasks:
+    - name: ensure glusterd is running
+      service:
+        name: glusterd
+        state: restarted
+        enabled: yes
+  tags:
+    - perf_harness
 
 - hosts: tag_instance_role_gluster_node[0]
   connection: ssh
-  gather_facts: yes
+  gather_facts: no
   become: true
   tasks:
     - name: copy the peer probe script
@@ -46,9 +61,10 @@
         dest: /tmp/peer_probe.sh
         owner: root
         mode: 755
-
     - name: execute the peer probe script
       shell: "/tmp/peer_probe.sh"
+  tags:
+    - perf_harness
 
 - hosts: localhost
   connection: local
@@ -106,8 +122,8 @@
   gather_facts: yes
   become: true
   tasks:
-    - name: apply the "{{ io_profile }}" tuned profile
-      shell: tuned-adm profile "rhgs-{{ io_profile }}-io"
+    - name: "apply the {{ io_profile }} tuned profile"
+      shell: "tuned-adm profile rhgs-{{ io_profile }}-io"
   tags:
     - perf_harness
 
@@ -172,7 +188,7 @@
         name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         state: installed
 
-    - name: install fio and Gluster client
+    - name: install PTS and Gluster client
       yum:
         name: phoronix-test-suite, glusterfs, glusterfs-fuse, gcc, gcc-c++, make, autoconf, automake, glibc-devel, glibc-headers, patch, libaio-devel, fio, bzip2
         state: latest
@@ -231,7 +247,7 @@
       register: pts
 
     - name: save the results
-      local_action: copy content={{ pts.stdout_lines }} dest=./results.json
+      local_action: copy content={{ pts.stdout_lines }} dest=./results_{{ ec2_instance_type }}_{{ io_profile }}_{{ io_file_size }}_{{ volume_type }}.json
 
   tags:
     - perf_run

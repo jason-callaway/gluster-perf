@@ -89,7 +89,7 @@ ENV/
 .ropeproject
 .idea
 *.retry
-hostvars.json
+*.json
 peer_probe.sh
 dispersed.sh
 distributed-replicated.sh
