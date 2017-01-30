@@ -25,7 +25,23 @@ The following metrics are collected for 4KB, 32KB, 256KB, 2MB, 32MB files:
 Unless the defaults in [group_vars/all.yml] are modified, this playbook will 
 deploy a Gluster cluster in this architecture:
 
+![Architecture](files/architecture.png)
 
+Each node instance has 8 EBS volumes, which, by default, are allocated as GP2
+10 GB volumes.
+
+![EBS view](files/ebs_view.png)
+
+When deployed as a ```distributed-replicated``` volume, files are horizontally
+distributed and synchronously mirrored (replicated) to the other "side."
+
+![distributed-replicated volue](files/distributed-replicated_view.png)
+
+When deployed as a ```dispersed``` volume using erasure coding, data is 
+dispersed among the data nodes, with parity maintained on parity nodes. The
+number of parity nodes is configurable, refer to [group_vars/all.yml].
+
+![dispersed volume](files/distributed-replicated_view.png)
 
 ## Running the playbook
 
