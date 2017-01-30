@@ -102,6 +102,15 @@ $ ansible-playbook -i inventory/aws/hosts/ec2.py site.yml
 ## Metrics
 
 Using the default configurations in this playbook, the following metrics were
-obtained; reference the associated JSON files.
+obtained. See the source [Excel spreadsheet](files/gluster-perf.xlsx) for raw data.
 
+### m4.2xlarge
+
+Each [m4.2xlarge](https://aws.amazon.com/ec2/instance-types/#m4) instance had 
+x8 10G GP2 EBS volumes and 1GbE dedicated network bandwitdh, see the above 
+architecture diagram.
+
+![Sequential IO](files/metrics_sequential.png)
+
+![Random IO](files/metrics_random.png)
 
