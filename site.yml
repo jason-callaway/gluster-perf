@@ -104,16 +104,17 @@
     - name: create the distributed-replicated script
       template:
         src: distributed-replicated.j2
-        dest: distributed-replicated.sh
+        dest: ./files/distributed-replicated.sh
     - name: create dispersed script
       template:
         src: dispersed.j2
-        dest: dispersed.sh
+        dest: ./files/dispersed.sh
     - name: create the mount script
       template:
         src: mount_volume.j2
-        dest: mount_volume.sh
+        dest: ./files/mount_volume.sh
   tags:
+    - perf_templates
     - perf_harness
     - perf_run
 
