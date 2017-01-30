@@ -1,5 +1,6 @@
 # gluster-perf
-Ansible scripts for Red Hat Storage Gluster performance testing
+Ansible scripts for [Red Hat Storage Gluster](https://www.redhat.com/en/technologies/storage/gluster) 
+performance testing
 
 ## Overview
 
@@ -14,7 +15,8 @@ availability
 * **dispersed volumes** that use [erasure coding](https://access.redhat.com/documentation/en-US/Red_Hat_Storage/3.1/html/Administration_Guide/chap-Red_Hat_Storage_Volumes-Creating_Dispersed_Volumes_1.html) 
 to increase data durability and availability
 
-The following metrics are collected for 4KB, 32KB, 256KB, 2MB, 32MB files:
+The following metrics are collected for 4KB, 32KB, 256KB, 2MB, 16MB, and 128MB 
+files:
 * sequential reads
 * sequential writes
 * random reads
@@ -55,7 +57,7 @@ and VPC services.
 3. awscli 1.11.44 or later
 4. Ansible Core 2.2.1 or later
 5. Access to the [Red Hat CDN](https://access.redhat.com) or the following, 
-recently updated yum repos:
+up-to-date yum repos:
   * rhel-7-server-rpms
   * rhel-7-server-extras-rpms
   * rhel-7-server-optional-rpms
