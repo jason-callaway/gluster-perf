@@ -22,7 +22,7 @@ The following metrics are collected for 4KB, 32KB, 256KB, 2MB, 32MB files:
 
 ## Default deployment architecture
 
-Unless the defaults in [group_vars/all.yml] are modified, this playbook will 
+Unless the defaults in [group_vars/all.yml](group_vars/all.yml) are modified, this playbook will 
 deploy a Gluster cluster in this architecture:
 
 ![Architecture](files/architecture.png)
@@ -39,7 +39,7 @@ distributed and synchronously mirrored (replicated) to the other "side."
 
 When deployed as a ```dispersed``` volume using erasure coding, data is 
 dispersed among the data nodes, with parity maintained on parity nodes. The
-number of parity nodes is configurable, refer to [group_vars/all.yml].
+number of parity nodes is configurable, refer to [group_vars/all.yml](group_vars/all.yml).
 
 ![dispersed volume](files/distributed-replicated_view.png)
 
