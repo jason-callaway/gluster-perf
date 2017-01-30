@@ -16,7 +16,7 @@ availability
 to increase data durability and availability
 
 The following metrics are collected for 4KB, 32KB, 256KB, 2MB, 16MB, and 128MB 
-files:
+files using the POSIX aio library:
 * sequential reads
 * sequential writes
 * random reads
@@ -115,4 +115,16 @@ architecture diagram.
 ![Sequential IO](files/metrics_sequential.png)
 
 ![Random IO](files/metrics_random.png)
+
+### Analysis
+
+For file sizes at or above 16MB we see execllent performance. The m4.2xlarge 
+ instances have a dedicated 1GbE network, which should support around 120MB/s
+ of throughput, theoretically. Writes are generally half the speed of reads, 
+ which in redundant configurations we would expect to be slower since data 
+ must be written to multiple places before the operation completes.
+ 
+Note that small file performance, with the exception of a few notable outliers,
+ has greatly improved since RHGS 3.0. I'm currently investigating the source 
+ of the outliers and will update this repo when I have more information.
 
