@@ -41,7 +41,7 @@ When deployed as a ```dispersed``` volume using erasure coding, data is
 dispersed among the data nodes, with parity maintained on parity nodes. The
 number of parity nodes is configurable, refer to [group_vars/all.yml](group_vars/all.yml).
 
-![dispersed volume](files/distributed-replicated_view.png)
+![dispersed volume](files/erasure-coded_view.png)
 
 ## Running the playbook
 
