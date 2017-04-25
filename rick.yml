@@ -1,0 +1,66 @@
+---
+- hosts: all
+  connection: ssh
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: ensure EPEL is installed
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: installed
+
+    - name: install PTS and Gluster client
+      yum:
+        name: phoronix-test-suite, glusterfs, glusterfs-fuse, gcc, gcc-c++, make, autoconf, automake, glibc-devel, glibc-headers, patch, libaio-devel, fio, bzip2
+        state: latest
+        enablerepo: epel
+
+    - name: copy the pts config file
+      template:
+        src: ./phoronix-test-suite.j2
+        dest: /etc/phoronix-test-suite.xml
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: make the results directory
+      file:
+        path: /root/phoronix-test-suite/test-results
+        recurse: yes
+        state: directory
+
+    - name: install the flexible IO test suite
+      shell: phoronix-test-suite install fio
+
+#    Size options:
+#    1:  4KB
+#    2:  8KB
+#    3:  16KB
+#    4:  32KB
+#    5:  64KB
+#    6:  128KB
+#    7:  256KB
+#    8:  512KB
+#    9:  1MB
+#    10: 2MB
+#    11: 4MB
+#    12: 8MB
+#    13: 16MB
+#    14: 32MB
+#    15: 64MB
+#    16: 128MB
+#    17: Test All Options
+    - name: run the tests for sequential io (takes up to 3 hours)
+      shell: "(echo 3,4; echo 1; echo 3; echo 3; echo 1,4,7,10,13,16; echo 1; echo Y; echo {{ ansible_date_time.iso8601 }}; echo rhgs-sequential-io; echo m4.2xlarge with x8 GP2) | phoronix-test-suite run fio"
+      when: io_profile == "sequential"
+      async: 10800
+      poll: 60
+
+    - name: collect the results
+      shell: "phoronix-test-suite result-file-to-json {{ ansible_date_time.iso8601 }}"
+      register: pts
+
+    - name: save the results
+      local_action: copy content={{ pts.stdout_lines }} dest=./results_{{ ec2_instance_type }}_{{ io_profile }}_{{ io_file_size }}_{{ volume_type }}.json
+  tags:
+    - perf_run

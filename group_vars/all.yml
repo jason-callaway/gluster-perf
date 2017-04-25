@@ -1,4 +1,6 @@
 ---
+rick_mount: /mnt
+
 cluster_id: gluster_perf
 r53_zone: rhtps.io
 ec2_keypair: "{{ lookup('env','ec2_keypair') }}"
@@ -21,8 +23,8 @@ io_profile: sequential
 io_file_size: large
 #io_profile: random
 #io_file_size: small
-#volume_type: distributed-replicated
-volume_type: dispersed
+volume_type: distributed-replicated
+#volume_type: dispersed
 replica_count: 2
 dispersed_redundancy: 2
 dispersed_data: "{{ gluster_num_hosts - dispersed_redundancy }}"
