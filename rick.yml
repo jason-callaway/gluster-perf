@@ -29,6 +29,17 @@
         recurse: yes
         state: directory
 
+    - name: ensure the downloads cache directory exists
+      file:
+        path: /var/cache/phoronix-test-suite/download-cache
+        recurse: yes
+        state: directory
+
+    - name: stage the fio installer
+      copy:
+        src: fio-2.3.13.tar.bz2
+        dest: /var/cache/phoronix-test-suite/download-cache/fio-2.3.13.tar.bz2
+
     - name: install the flexible IO test suite
       shell: phoronix-test-suite install fio
 
@@ -52,7 +63,6 @@
 #    17: Test All Options
     - name: run the tests for sequential io (takes up to 3 hours)
       shell: "(echo 3,4; echo 1; echo 3; echo 3; echo 1,4,7,10,13,16; echo 1; echo Y; echo {{ ansible_date_time.iso8601 }}; echo rhgs-sequential-io; echo m4.2xlarge with x8 GP2) | phoronix-test-suite run fio"
-      when: io_profile == "sequential"
       async: 10800
       poll: 60
 
