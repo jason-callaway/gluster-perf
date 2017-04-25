@@ -2,6 +2,7 @@
 - hosts: all
   connection: ssh
   gather_facts: yes
+  remote_user: "{{ rick_user }}"
   become: true
   tasks:
     - name: ensure EPEL is installed

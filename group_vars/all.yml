@@ -1,5 +1,6 @@
 ---
 rick_mount: /mnt
+rick_user: rick
 
 cluster_id: gluster_perf
 r53_zone: rhtps.io
